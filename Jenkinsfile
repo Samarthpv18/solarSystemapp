@@ -5,11 +5,11 @@ pipeline {
   stages {
       stage('VM Node Version') {
 	       steps {
-           sh '''
-              node -v
-              npm -v
-           '''
-         }
+              sh '''
+                 node -v
+                 npm -v
+              '''
+          }
       }
   }
 }
