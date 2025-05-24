@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+        nodejs 'NodeJS-22.15.1'
+    }
     stages {
         stage('Check Node & NPM in Frontend') {
             steps {
