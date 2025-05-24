@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Check Node & NPM in Frontend') {
             steps {
-                dir('frontend') {
-                    echo "Checking Node and NPM versions in frontend..."
+                dir('backend') {
+                    echo "Checking Node and NPM versions in backend..."
                     sh 'node -v'
                     sh 'npm -v'
                 }
