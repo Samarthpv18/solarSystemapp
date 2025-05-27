@@ -9,7 +9,7 @@ pipeline {
     }
 
     stages {
-        stage('Checking Node & NPM in Backend') {
+        stage('Checking Node & NPM in Backend and starting node') {
             steps {
                 dir('backend') {
                     echo "Checking Node and NPM versions in backend..."
@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Checking Node & NPM in Frontend') {
+        stage('Checking Node & NPM in Frontend and starting npm') {
             steps {
                 dir('frontend') {
                     echo "Checking Node and NPM versions in frontend..."
