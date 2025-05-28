@@ -15,7 +15,7 @@ pipeline {
                     echo "Checking Node and NPM versions in backend..."
                     sh 'node -v'
                     sh 'npm -v'
-                    sh 'node server.js'
+                    sh 'node server.js &'
                 }
             }
         }
