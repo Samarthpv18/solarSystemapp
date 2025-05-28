@@ -29,9 +29,27 @@ pipeline {
                     sh 'npm start &'
                 }
             }
+     
+        }
+        stage('building docker for backend ') {
+            steps {
+                dir('backend') {
+                    sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
+                }
+            }
+        }
+        stage('building docker image for frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'docker build -t samarthpv18/frontend:$GIT_COMMIT .'
+                }
+            }
         }
     }
+
 }
+
+    
 
 
 
