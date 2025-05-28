@@ -31,7 +31,7 @@ pipeline {
             }
      
         }
-        stage('building docker for backend ') {
+        stage('building docker image for backend ') {
             steps {
                 dir('backend') {
                     sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
