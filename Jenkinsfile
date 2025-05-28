@@ -40,7 +40,7 @@ pipeline {
         }
         stage('pushing backend docker image to dockerhub.com') {
             steps {
-               withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com') 
+               withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') 
                   sh 'docker push  samarthpv18/frontend:$GIT_COMMIT'
             }
         }
@@ -53,7 +53,7 @@ pipeline {
         }
         stage('pushing the frontend docker image to dockerhub.com') {
             steps {
-                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com')
+                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/')
                    sh 'docker push  samarthpv18/frontend:$GIT_COMMIT '
             }
         }
