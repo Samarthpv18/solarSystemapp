@@ -35,7 +35,13 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
-                }
+                }   
+            }
+        }
+        stage('pushing backend docker image to dockerhub') {
+            steps {
+               withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com') 
+                  sh 'docker push  samarthpv18/frontend:$GIT_COMMIT'
             }
         }
         stage('building docker image for frontend') {
@@ -45,6 +51,14 @@ pipeline {
                 }
             }
         }
+        stage('pushing the frontend docker image to dockerhub') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com')
+                   sh 'docker push  samarthpv18/frontend:$GIT_COMMIT '
+            }
+        }
+        
+
     }
 
 }
