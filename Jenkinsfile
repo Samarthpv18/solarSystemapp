@@ -15,7 +15,7 @@ pipeline {
                     echo "Checking Node and NPM versions in backend..."
                     sh 'node -v'
                     sh 'npm -v'
-                    sh ' node server.js &'
+                    sh 'node server.js'
                 }
             }
         }
@@ -40,8 +40,9 @@ pipeline {
         }
         stage('pushing backend docker image to dockerhub.com') {
             steps {
-               withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') 
+               withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') {
                   sh 'docker push  samarthpv18/frontend:$GIT_COMMIT'
+               }
             }
         }
         stage('building docker image for frontend') {
@@ -53,8 +54,9 @@ pipeline {
         }
         stage('pushing the frontend docker image to dockerhub.com') {
             steps {
-                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/')
+                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') {
                    sh 'docker push  samarthpv18/frontend:$GIT_COMMIT '
+                }
             }
         }
         
