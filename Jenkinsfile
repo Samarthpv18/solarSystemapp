@@ -42,7 +42,7 @@ pipeline {
         stage('pushing backend docker image to dockerhub.com') {
             steps {
                withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') {
-                  sh 'docker push  samarthpv18/frontend:$GIT_COMMIT'
+                  sh 'docker push  samarthpv18/backend:$GIT_COMMIT'
                }
             }
         }
