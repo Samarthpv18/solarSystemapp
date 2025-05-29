@@ -31,7 +31,7 @@ pipeline {
             }
      
         }
-        stage('building docker image for backend ') {
+        stage('building docker image for backend and list') {
             steps {
                 dir('backend') {
                     sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
@@ -46,7 +46,7 @@ pipeline {
                }
             }
         }
-        stage('building docker image for frontend') {
+        stage('building docker image for frontend and list') {
             steps {
                 dir('frontend') {
                     sh 'docker build -t samarthpv18/frontend:$GIT_COMMIT .'
