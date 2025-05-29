@@ -35,6 +35,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
+                    sh 'docker images'
                 }   
             }
         }
@@ -49,6 +50,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh 'docker build -t samarthpv18/frontend:$GIT_COMMIT .'
+                    sh 'docker images'
                 }
             }
         }
