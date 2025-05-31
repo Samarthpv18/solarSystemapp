@@ -61,6 +61,39 @@ pipeline {
                 }
             }
         }
+        stage('deploy to aws') {
+            when {
+                branch 'feature/*'
+            }
+            steps {
+                script {
+                    sshagent(['AWS-ec2-ssh']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com
+                                " if sudo docker ps -a | grep -q "solar-system-backend" ; then
+                                     echo " Container found "
+                                        sudo docker rm -f "solar-system-backend"
+                                     echo " Container stopped and removed "
+                                  fi
+                                    sudo docker run -d --name solar-system-backend --network solar-system -e MONGO_URI=$MONGO_URI -p 3000:3000 samarthpv18/backend:$GIT_COMMIT   
+                        
+                                "
+                     
+                        '''
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com
+                                " if sudo docker ps -a | grep -q "solar-system-frontend" ; then
+                                     echo " Container found "
+                                        sudo docker rm -f "solar-system-frontend"
+                                     echo " Container stopped and removed "
+                                  fi
+                                    sudo docker run -d --name solar-system-frontend --network solar-system  -p 5000:5000 samarthpv18/frontend:$GIT_COMMIT    
+                            "  
+                        ''' 
+                    }
+                }
+            }
+        }
         
 
     }
