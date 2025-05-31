@@ -6,11 +6,11 @@ pipeline {
     }
 
     environment {
-        MONGO_URI = credentials('MONGO_URI')
+        MONGO_URI = credentials('MONGO_URI') 
     }
 
     stages {
-        stage('Checking Node & NPM in Backend and starting node') {
+        stage('Check Node & NPM in Backend') {
             steps {
                 dir('backend') {
                     echo "Checking Node and NPM versions in backend..."
@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Checking Node & NPM in Frontend and starting npm') {
+        stage('Check Node & NPM in Frontend') {
             steps {
                 dir('frontend') {
                     echo "Checking Node and NPM versions in frontend..."
@@ -30,69 +30,69 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image for Backend') {
+        stage('Build Backend Docker Image') {
             steps {
                 dir('backend') {
-                    sh 'docker build -t samarthpv18/backend:${GIT_COMMIT} .'
+                    sh 'docker build -t samarthpv18/backend:$GIT_COMMIT .'
                     sh 'docker images'
                 }
             }
         }
 
-        stage('Push Backend Docker Image') {
+        stage('Push Backend Docker Image to DockerHub') {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') {
-                    sh 'docker push samarthpv18/backend:${GIT_COMMIT}'
+                    sh 'docker push samarthpv18/backend:$GIT_COMMIT'
                 }
             }
         }
 
-        stage('Build Docker Image for Frontend') {
+        stage('Build Frontend Docker Image') {
             steps {
                 dir('frontend') {
-                    sh 'docker build -t samarthpv18/frontend:${GIT_COMMIT} .'
+                    sh 'docker build -t samarthpv18/frontend:$GIT_COMMIT .'
                     sh 'docker images'
                 }
             }
         }
 
-        stage('Push Frontend Docker Image') {
+        stage('Push Frontend Docker Image to DockerHub') {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/') {
-                    sh 'docker push samarthpv18/frontend:${GIT_COMMIT}'
+                    sh 'docker push samarthpv18/frontend:$GIT_COMMIT'
                 }
             }
         }
 
         stage('Deploy to AWS EC2') {
             when {
-                branch 'feature/*'
+                branch pattern: "feature/.*", comparator: "REGEXP"
             }
             steps {
                 script {
                     sshagent(credentials: ['AWS-ec2-ssh']) {
 
                         // Deploy Backend
-                        sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << EOF
-                            if sudo docker ps -a | grep -q solar-system-backend; then
-                                echo "Container solar-system-backend found. Removing..."
-                                sudo docker rm -f solar-system-backend
-                            fi
-                            sudo docker run -d --name solar-system-backend --network solar-system -e MONGO_URI=${MONGO_URI} -p 3000:3000 samarthpv18/backend:${GIT_COMMIT}
+                        sh '''
+ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << 'EOF'
+if sudo docker ps -a | grep -q solar-system-backend; then
+    echo "Container solar-system-backend found. Removing..."
+    sudo docker rm -f solar-system-backend
+fi
+sudo docker run -d --name solar-system-backend --network solar-system -e MONGO_URI='$MONGO_URI' -p 3000:3000 samarthpv18/backend:'$GIT_COMMIT'
 EOF
-                        """
+'''
 
                         // Deploy Frontend
-                        sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << EOF
-                            if sudo docker ps -a | grep -q solar-system-frontend; then
-                                echo "Container solar-system-frontend found. Removing..."
-                                sudo docker rm -f solar-system-frontend
-                            fi
-                            sudo docker run -d --name solar-system-frontend --network solar-system -p 5000:5000 samarthpv18/frontend:${GIT_COMMIT}
+                        sh '''
+ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << 'EOF'
+if sudo docker ps -a | grep -q solar-system-frontend; then
+    echo "Container solar-system-frontend found. Removing..."
+    sudo docker rm -f solar-system-frontend
+fi
+sudo docker run -d --name solar-system-frontend --network solar-system -p 5000:5000 samarthpv18/frontend:'$GIT_COMMIT'
 EOF
-                        """
+'''
                     }
                 }
             }
