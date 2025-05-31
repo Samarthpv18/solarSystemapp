@@ -111,20 +111,4 @@ EOF
         }
     }
     
-    post {
-        always {
-            // Clean up local Docker images to save space
-            sh '''
-                docker image prune -f
-                docker rmi -f samarthpv18/backend:${GIT_COMMIT} || true
-                docker rmi -f samarthpv18/frontend:${GIT_COMMIT} || true
-            '''
-        }
-        success {
-            echo "Pipeline completed successfully!"
-        }
-        failure {
-            echo "Pipeline failed. Check the logs for details."
-        }
-    }
 }
