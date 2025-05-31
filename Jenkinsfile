@@ -72,18 +72,7 @@ pipeline {
                 script {
                     sshagent(credentials: ['AWS-ec2-ssh']) {
 
-                        // Deploy Backend
-                        sh '''
-ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << 'EOF'
-if sudo docker ps -a | grep -q solar-system-backend; then
-    echo "Container solar-system-backend found. Removing..."
-    sudo docker rm -f solar-system-backend
-fi
-sudo docker run -d --name solar-system-backend --network solar-system -e MONGO_URI='$MONGO_URI' -p 3000:3000 samarthpv18/backend:'$GIT_COMMIT'
-EOF
-'''
-
-                        // Deploy Frontend
+                        // ✅ Deploy Frontend First
                         sh '''
 ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << 'EOF'
 if sudo docker ps -a | grep -q solar-system-frontend; then
@@ -91,6 +80,17 @@ if sudo docker ps -a | grep -q solar-system-frontend; then
     sudo docker rm -f solar-system-frontend
 fi
 sudo docker run -d --name solar-system-frontend --network solar-system -p 5000:5000 samarthpv18/frontend:'$GIT_COMMIT'
+EOF
+'''
+
+                        // ✅ Deploy Backend After Frontend
+                        sh '''
+ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-87-162-94.compute-1.amazonaws.com << 'EOF'
+if sudo docker ps -a | grep -q solar-system-backend; then
+    echo "Container solar-system-backend found. Removing..."
+    sudo docker rm -f solar-system-backend
+fi
+sudo docker run -d --name solar-system-backend --network solar-system -e MONGO_URI='$MONGO_URI' -p 3000:3000 samarthpv18/backend:'$GIT_COMMIT'
 EOF
 '''
                     }
